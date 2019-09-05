@@ -213,7 +213,7 @@ namespace LdapServiceTest
         {
             StaticTestLogger.ResetLogfile();
             
-            #region Dependecy injection setup  
+            
             IServiceCollection services = new ServiceCollection();
 
             //Create configuration builder  
@@ -222,49 +222,57 @@ namespace LdapServiceTest
                 //.AddJsonFile("appsettings.json")
             ;
 
-
+            /*
+            IConfiguration iconf = Configuration.GetSection("Smtp"); 
+            
+            
+            
+            Microsoft.Extensions.DependencyInjection.OptionsConfigurationServiceCollectionExtensions.Configure<SmtpConfig>(
+                services, iconf
+            );
+            */
+            
+            
             //Inject configuration  
             services.AddSingleton<IConfiguration>(provider =>
             {
                 return configurationBuilder.Build();
             });
-
+            
+            
             //Inject Serilog  
             services.AddLogging(options =>
             {
-
                 options.SetMinimumLevel(LogLevel.Information);
                 options.AddFilter(x => x >= LogLevel.Trace);
-
+                
                 options.AddConsole();
                 options.AddDebug();
-
+                
                 /*
                 options.AddSerilog(
                     new LoggerConfiguration()
                                .ReadFrom.Configuration(configurationBuilder.Build())
                                .CreateLogger()
                     );
-                    */
+                */
             });
-
-            //Inject common service  
+            
+            
+            // Inject common service  
             services.AddSingleton(typeof(ICommonService), typeof(CommonSampleService));
-
-            //Inject concrete implementaion of the service  
+            
+            // Inject concrete implementaion of the service  
             services.AddSingleton(typeof(System.ServiceProcess.ServiceBase), typeof(GenericService));
-
-
+            
+            // My configuration
             services.AddSingleton(new MyConfig());
             
-
-
+            
             //Build DI provider  
             ServiceProvider serviceProvider = services.BuildServiceProvider();
-
-
-            #endregion
-
+            
+            
             if (System.Diagnostics.Debugger.IsAttached)
             {
                 //Console Debug mode  
@@ -272,26 +280,42 @@ namespace LdapServiceTest
                 GenericService svc = serviceProvider.GetService<System.ServiceProcess.ServiceBase>() as GenericService;
                 svc.StartService(args);
 
-                System.Console.ReadLine();
+                // System.Console.ReadLine();
+                
+                System.ConsoleKey cc = default(System.ConsoleKey);
+                do
+                {
+                    // THIS IS MADNESS!!!   Madness huh?   THIS IS SPARTA!!!!!!! 
+                    while (!System.Console.KeyAvailable)
+                    {
+                        System.Threading.Thread.Sleep(100);
+                    }
+                    
+                    cc = System.Console.ReadKey().Key;
+                    
+                    if(cc == System.ConsoleKey.C)
+                        System.Console.Clear();
+                    
+                } while (cc != System.ConsoleKey.Enter);
+                svc.Stop();
             }
             else
             {
-                //Start service  
-
-                System.ServiceProcess.ServiceBase[] ServicesToRun;
-                ServicesToRun = new System.ServiceProcess.ServiceBase[]
+                // Start service 
+                System.ServiceProcess.ServiceBase[] servicesToRun;
+                servicesToRun = new System.ServiceProcess.ServiceBase[]
                 {
                     serviceProvider.GetService<System.ServiceProcess.ServiceBase>()
                 };
-
-                System.ServiceProcess.ServiceBase.Run(ServicesToRun);
+                
+                System.ServiceProcess.ServiceBase.Run(servicesToRun);
             }
-
+            
             await System.Threading.Tasks.Task.CompletedTask;
-        }
-
-
+        } // End Task Main 
+        
+        
     } // End Class Program 
-
-
+    
+    
 } // End Namespace 
