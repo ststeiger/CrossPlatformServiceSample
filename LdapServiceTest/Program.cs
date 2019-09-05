@@ -28,72 +28,34 @@ namespace LdapServiceTest
     }
 
 
-    /*
-    public abstract class CommonServiceBase
-        : ICommonService
-    {
-        
-        private IConfiguration configuration;
-        ILogger<CommonServiceBase> logger;
 
-        public IConfiguration Configuration => this.configuration;
-        public ILogger<CommonServiceBase> Logger => this.logger;
-
-
-        public CommonServiceBase(
-              IConfiguration configuration
-            , ILogger<CommonServiceBase> logger
-            , MyConfig config
-        )
-        {
-            this.configuration = configuration;
-            this.logger = logger;
-            System.Console.WriteLine(config.A);
-            System.Console.WriteLine(config.B);
-        }
-
-        public abstract void OnStart();
-
-        public abstract void OnStop();
-
-       
-        //void ICommonService.OnStart()
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //void ICommonService.OnStop()
-        //{
-        //    throw new NotImplementedException();
-        //}
-        
-    }
-    */
-
-    public class CommonSampleService 
-        // : CommonServiceBase
-
+    public class CommonSampleService
         : ICommonService
 {
 
-        private IConfiguration configuration;
-        ILogger<CommonSampleService> logger;
+        private IConfiguration m_configuration;
+        ILogger<CommonSampleService> m_logger;
+        protected bool m_run;
 
+
+        public IConfiguration Configuration => this.m_configuration;
+
+
+        // public ILogger<CommonSampleService> Logger => this.m_logger;
+        public ILogger<CommonSampleService> Logger { get { return this.m_logger; } }
         
-        public IConfiguration Configuration => this.configuration;
-        public ILogger<CommonSampleService> Logger => this.logger;
-
 
         public CommonSampleService(
               IConfiguration configuration
             , ILogger<CommonSampleService> logger
             , MyConfig config
             , Microsoft.Extensions.Options.IOptions<SmtpConfig> smtp
-            )  //: base(configuration, logger, config)
+            )
         {
             System.Console.WriteLine(smtp.Value.Server);
-            this.configuration = configuration;
-            this.logger = logger;
+            this.m_configuration = configuration;
+            this.m_logger = logger;
+
             System.Console.WriteLine(config.A);
             System.Console.WriteLine(config.B);
 
@@ -102,11 +64,11 @@ namespace LdapServiceTest
 
 
 
-        public bool m_Run;
+        
 
         public async System.Threading.Tasks.Task RunDbSync()
         {
-            while (this.m_Run)
+            while (this.m_run)
             {
                 StaticTestLogger.AppendLine("XXXService: Tick");
                 System.Console.WriteLine("XXXService: Tick");
@@ -116,35 +78,12 @@ namespace LdapServiceTest
         } // End Task RunDbSync 
 
 
-
-        //public override void OnStart()
-        //{
-        //    StaticTestLogger.AppendLine("XXXService: StartAsync");
-        //    System.Console.WriteLine("XXXService: StartAsync");
-        //    this.Logger.LogInformation("CommonSampleService OnStart");
-
-        //    this.m_Run = true;
-        //    System.Threading.Tasks.Task t = RunDbSync();
-        //}
-
-
-        //public override void OnStop()
-        //{
-        //    StaticTestLogger.AppendLine("XXXService: StopAsync");
-        //    System.Console.WriteLine("XXXService: StopAsync");
-        //    this.Logger.LogInformation("CommonSampleService OnStop");
-
-        //    this.m_Run = false;
-        //}
-
-
         void ICommonService.OnStart()
         {
             StaticTestLogger.AppendLine("XXXService: StartAsync");
             System.Console.WriteLine("XXXService: StartAsync");
             this.Logger.LogInformation("CommonSampleService OnStart");
-
-            this.m_Run = true;
+            this.m_run = true;
             System.Threading.Tasks.Task t = RunDbSync();
         }
 
@@ -154,7 +93,7 @@ namespace LdapServiceTest
             System.Console.WriteLine("XXXService: StopAsync");
             this.Logger.LogInformation("CommonSampleService OnStop");
 
-            this.m_Run = false;
+            this.m_run = false;
         }
 
 
@@ -225,8 +164,18 @@ namespace LdapServiceTest
         // static void Main(string[] args) { Console.WriteLine("Running."); MainTask(args).Wait(); Console.WriteLine("Finished."); }
 
 
-        // static async System.Threading.Tasks.Task MainTask(string[] args)
+
         static async System.Threading.Tasks.Task Main(string[] args)
+        {
+            if (System.Environment.OSVersion.Platform == System.PlatformID.Unix)
+                await LinuxMain(args);
+            else
+                await WindowsMain(args);
+        }
+
+
+        // static async System.Threading.Tasks.Task MainTask(string[] args)
+        static async System.Threading.Tasks.Task WindowsMain(string[] args)
         {
             StaticTestLogger.ResetLogfile();
             
