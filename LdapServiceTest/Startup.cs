@@ -1,0 +1,67 @@
+
+namespace LdapServiceTest
+{
+
+    // namespace Microsoft.AspNet.Builder
+    public interface IApplicationBuilder
+    {
+        System.IServiceProvider ApplicationServices { get; set; }
+        object Server { get; }
+        System.Collections.Generic.IDictionary<string, object> Properties { get; }
+        
+        // Microsoft.AspNet.Http.Abstractions RequestDelegate
+        // IApplicationBuilder Use(System.Func<RequestDelegate, RequestDelegate> middleware);
+        
+        IApplicationBuilder New();
+
+        // RequestDelegate Build();
+    } // End interface IApplicationBuilder
+    
+    
+    // namespace Microsoft.AspNetCore.Hosting
+    public interface IStartup
+    {
+        System.IServiceProvider ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection services);
+
+        void Configure(IApplicationBuilder app);
+    } // End Interface IStartup
+    
+    
+    public class Foo
+        : IStartup
+    {
+        public Microsoft.Extensions.Configuration.IConfiguration Configuration { get; }
+        private IApplicationBuilder m_application;
+        
+        
+        public Foo(Microsoft.Extensions.Configuration.IConfiguration configuration)
+        {
+            this.Configuration = configuration;
+        }
+        
+        
+        System.IServiceProvider IStartup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection services)
+        {
+            return null;
+            //throw new NotImplementedException();
+        }
+        
+        
+        void IStartup.Configure(IApplicationBuilder app)
+        {
+            this.m_application = app;
+            
+            // Microsoft.Extensions.Logging.ILoggerFactory loggerFactory = app.ApplicationServices.
+            //     GetRequiredService<Microsoft.Extensions.Logging.ILoggerFactory>();
+            
+            // Microsoft.AspNetCore.Hosting.IHostingEnvironment env = app.ApplicationServices.
+            //     GetRequiredService<Microsoft.AspNetCore.Hosting.IHostingEnvironment>();
+            
+            // throw new NotImplementedException();
+        }
+        
+        
+    } // End Class Foo 
+    
+    
+} // End Namespace LdapServiceTest 

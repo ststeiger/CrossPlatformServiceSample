@@ -2,10 +2,9 @@
 namespace LdapServiceTest
 {
     class MyExtensions
-    {
-    }
-
-
+    { }
+    
+    
     public class SmtpConfig
     {
         public string Server { get; set; }
@@ -13,20 +12,18 @@ namespace LdapServiceTest
         public string Pass { get; set; }
         public int Port { get; set; }
     }
-
-
-
+    
     public class MyConfig
     {
         public string A = "AAAAA";
         public string B = "B";
     }
-
-
+    
+    
     static class StaticTestLogger
     {
-
-
+        
+        
         private static string FileName
         {
             get
@@ -37,22 +34,23 @@ namespace LdapServiceTest
                 return "/root/Documents/Dummy.log.txt";
             }
         }
-
-
+        
+        
         public static void AppendLine(string text)
         {
             System.IO.File.AppendAllText(FileName, text + System.Environment.NewLine);
         }
-
+        
+        
         public static void ResetLogfile()
         {
             if (System.IO.File.Exists(FileName))
                 System.IO.File.Delete(FileName);
 
         }
-
+        
+        
     }
-
-
-
+    
+    
 }
