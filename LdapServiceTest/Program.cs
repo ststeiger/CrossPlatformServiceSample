@@ -1,6 +1,9 @@
 ﻿
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 // using System.Threading.Tasks;
@@ -18,44 +21,6 @@ namespace LdapServiceTest
 {
 
 
-    public class MyConfig
-    {
-        public string A = "AAAAA";
-        public string B = "B";
-    }
-
-
-    static class StaticTestLogger
-    {
-        
-
-        private static string FileName
-        {
-            get
-            {
-                if (System.Environment.OSVersion.Platform != System.PlatformID.Unix)
-                    return @"d:\Dummy.log.txt";
-
-                return "/root/Documents/Dummy.log.txt";
-            }
-        }
-
-
-        public static void AppendLine(string text)
-        {
-            System.IO.File.AppendAllText(FileName, text + System.Environment.NewLine);
-        }
-
-        public static void ResetLogfile()
-        {
-            if (System.IO.File.Exists(FileName))
-                System.IO.File.Delete(FileName);
-
-        }
-
-    }
-
-
     public interface ICommonService
     {
         void OnStart();
@@ -63,6 +28,7 @@ namespace LdapServiceTest
     }
 
 
+    /*
     public abstract class CommonServiceBase
         : ICommonService
     {
@@ -90,30 +56,47 @@ namespace LdapServiceTest
 
         public abstract void OnStop();
 
-        /*
-        void ICommonService.OnStart()
-        {
-            throw new NotImplementedException();
-        }
+       
+        //void ICommonService.OnStart()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        void ICommonService.OnStop()
-        {
-            throw new NotImplementedException();
-        }
-        */
+        //void ICommonService.OnStop()
+        //{
+        //    throw new NotImplementedException();
+        //}
+        
     }
-
+    */
 
     public class CommonSampleService 
-        : CommonServiceBase
-    {
+        // : CommonServiceBase
+
+        : ICommonService
+{
+
+        private IConfiguration configuration;
+        ILogger<CommonSampleService> logger;
+
+        
+        public IConfiguration Configuration => this.configuration;
+        public ILogger<CommonSampleService> Logger => this.logger;
+
 
         public CommonSampleService(
               IConfiguration configuration
             , ILogger<CommonSampleService> logger
             , MyConfig config
-            ) : base(configuration, logger, config)
+            , Microsoft.Extensions.Options.IOptions<SmtpConfig> smtp
+            )  //: base(configuration, logger, config)
         {
+            System.Console.WriteLine(smtp.Value.Server);
+            this.configuration = configuration;
+            this.logger = logger;
+            System.Console.WriteLine(config.A);
+            System.Console.WriteLine(config.B);
+
             logger.LogInformation("Class instatiated");
         }
 
@@ -128,13 +111,34 @@ namespace LdapServiceTest
                 StaticTestLogger.AppendLine("XXXService: Tick");
                 System.Console.WriteLine("XXXService: Tick");
                 await System.Threading.Tasks.Task.Delay(1000);
-            }
+            } // Whend 
 
-        }
+        } // End Task RunDbSync 
 
 
 
-        public override void OnStart()
+        //public override void OnStart()
+        //{
+        //    StaticTestLogger.AppendLine("XXXService: StartAsync");
+        //    System.Console.WriteLine("XXXService: StartAsync");
+        //    this.Logger.LogInformation("CommonSampleService OnStart");
+
+        //    this.m_Run = true;
+        //    System.Threading.Tasks.Task t = RunDbSync();
+        //}
+
+
+        //public override void OnStop()
+        //{
+        //    StaticTestLogger.AppendLine("XXXService: StopAsync");
+        //    System.Console.WriteLine("XXXService: StopAsync");
+        //    this.Logger.LogInformation("CommonSampleService OnStop");
+
+        //    this.m_Run = false;
+        //}
+
+
+        void ICommonService.OnStart()
         {
             StaticTestLogger.AppendLine("XXXService: StartAsync");
             System.Console.WriteLine("XXXService: StartAsync");
@@ -144,7 +148,7 @@ namespace LdapServiceTest
             System.Threading.Tasks.Task t = RunDbSync();
         }
 
-        public override void OnStop()
+        void ICommonService.OnStop()
         {
             StaticTestLogger.AppendLine("XXXService: StopAsync");
             System.Console.WriteLine("XXXService: StopAsync");
@@ -152,7 +156,11 @@ namespace LdapServiceTest
 
             this.m_Run = false;
         }
+
+
+
     }
+
 
 
     public partial class GenericService 
@@ -175,7 +183,6 @@ namespace LdapServiceTest
         }
         
 
-
         protected override void OnStart(string[] args)
         {
             this.StartService(args);
@@ -186,13 +193,23 @@ namespace LdapServiceTest
         {
             this.commonService.OnStop();
         }
+        
+
+        // TODO: Implement
+        protected override void OnPause()
+        {
+
+        }
+        
+
+        protected override void OnContinue()
+        {
+
+        }
 
 
         /*
-         
-        protected virtual void OnContinue();
         protected virtual void OnCustomCommand(int command);
-        protected virtual void OnPause();
         protected virtual bool OnPowerEvent(PowerBroadcastStatus powerStatus);
         protected virtual void OnSessionChange(SessionChangeDescription changeDescription);
         protected virtual void OnShutdown();
@@ -200,15 +217,15 @@ namespace LdapServiceTest
         protected virtual void OnStop();
         */
 
-    } // End Class GenericService 
 
+    } // End Class GenericService 
 
     class Program
     {
         // static void Main(string[] args) { Console.WriteLine("Running."); MainTask(args).Wait(); Console.WriteLine("Finished."); }
 
 
-        //static async System.Threading.Tasks.Task MainTask(string[] args)
+        // static async System.Threading.Tasks.Task MainTask(string[] args)
         static async System.Threading.Tasks.Task Main(string[] args)
         {
             StaticTestLogger.ResetLogfile();
@@ -216,31 +233,42 @@ namespace LdapServiceTest
             
             IServiceCollection services = new ServiceCollection();
 
-            //Create configuration builder  
+            // Create configuration builder  
             IConfigurationBuilder configurationBuilder = new ConfigurationBuilder()
                 .SetBasePath(System.IO.Directory.GetCurrentDirectory())
                 //.AddJsonFile("appsettings.json")
             ;
 
+            
+            
+            
+            services.Configure<SmtpConfig>(
+                delegate(SmtpConfig config) 
+                {
+                    config.Server = "hello world";
+                    return;
+                }
+            );
+
             /*
-            IConfiguration iconf = Configuration.GetSection("Smtp"); 
-            
-            
-            
+            // IConfiguration Configuration = null;
+
+            // services.Configure<SmtpConfig>(Configuration.GetSection("Smtp"));
+            // IConfiguration iconf = Configuration.GetSection("Smtp");
             Microsoft.Extensions.DependencyInjection.OptionsConfigurationServiceCollectionExtensions.Configure<SmtpConfig>(
                 services, iconf
             );
             */
-            
-            
-            //Inject configuration  
+
+
+            // Inject configuration  
             services.AddSingleton<IConfiguration>(provider =>
             {
                 return configurationBuilder.Build();
             });
             
             
-            //Inject Serilog  
+            // Inject Serilog  
             services.AddLogging(options =>
             {
                 options.SetMinimumLevel(LogLevel.Information);
@@ -269,13 +297,13 @@ namespace LdapServiceTest
             services.AddSingleton(new MyConfig());
             
             
-            //Build DI provider  
+            // Build DI provider  
             ServiceProvider serviceProvider = services.BuildServiceProvider();
             
             
             if (System.Diagnostics.Debugger.IsAttached)
             {
-                //Console Debug mode  
+                // Console Debug mode  
 
                 GenericService svc = serviceProvider.GetService<System.ServiceProcess.ServiceBase>() as GenericService;
                 svc.StartService(args);
@@ -288,7 +316,8 @@ namespace LdapServiceTest
                     // THIS IS MADNESS!!!   Madness huh?   THIS IS SPARTA!!!!!!! 
                     while (!System.Console.KeyAvailable)
                     {
-                        System.Threading.Thread.Sleep(100);
+                        // System.Threading.Thread.Sleep(100);
+                        await System.Threading.Tasks.Task.Delay(100);
                     }
                     
                     cc = System.Console.ReadKey().Key;
@@ -297,6 +326,7 @@ namespace LdapServiceTest
                         System.Console.Clear();
                     
                 } while (cc != System.ConsoleKey.Enter);
+
                 svc.Stop();
             }
             else
@@ -309,13 +339,120 @@ namespace LdapServiceTest
                 };
                 
                 System.ServiceProcess.ServiceBase.Run(servicesToRun);
-            }
-            
-            await System.Threading.Tasks.Task.CompletedTask;
+            } // End else of if (System.Diagnostics.Debugger.IsAttached) 
+
+            // await System.Threading.Tasks.Task.CompletedTask;
         } // End Task Main 
         
-        
+
+        static async System.Threading.Tasks.Task LinuxMain(string[] args)
+        {
+            Microsoft.Extensions.Hosting.IHost host = 
+                new Microsoft.Extensions.Hosting.HostBuilder()
+                 .ConfigureHostConfiguration(configHost =>
+                 {
+                     configHost.SetBasePath(System.IO.Directory.GetCurrentDirectory());
+                     configHost.AddEnvironmentVariables(prefix: "ASPNETCORE_");
+                     configHost.AddCommandLine(args);
+                 })
+                 .ConfigureAppConfiguration((hostContext, configApp) =>
+                 {
+                     configApp.SetBasePath(System.IO.Directory.GetCurrentDirectory());
+                     configApp.AddEnvironmentVariables(prefix: "ASPNETCORE_");
+                     configApp.AddJsonFile($"appsettings.json", true);
+                     configApp.AddJsonFile($"appsettings.{hostContext.HostingEnvironment.EnvironmentName}.json", true);
+                     configApp.AddCommandLine(args);
+                 })
+                .ConfigureServices((hostContext, services) =>
+                {
+                    services.AddLogging();
+                    services.AddHostedService<LinuxServiceHost>();
+                    services.AddSingleton(typeof(ICommonService), typeof(CommonSampleService));
+                })
+                .ConfigureLogging((hostContext, configLogging) =>
+                {
+                    // configLogging.AddSerilog(new LoggerConfiguration()
+                    //           .ReadFrom.Configuration(hostContext.Configuration)
+                    //           .CreateLogger());
+                    configLogging.AddConsole();
+                    configLogging.AddDebug();
+                })
+                .Build();
+
+            await host.RunAsync();
+        } // End Task LinuxMain 
+
+
     } // End Class Program 
-    
-    
+
+
+
+
+
+
+
+    public class LinuxServiceHost
+        : IHostedService
+    {
+
+        
+        IApplicationLifetime appLifetime;
+        ILogger<LinuxServiceHost> logger;
+        IHostingEnvironment environment;
+        IConfiguration configuration;
+        ICommonService commonService;
+
+
+        public LinuxServiceHost(
+            IConfiguration configuration,
+            IHostingEnvironment environment,
+            ILogger<LinuxServiceHost> logger,
+            IApplicationLifetime appLifetime,
+            ICommonService commonService)
+        {
+            this.configuration = configuration;
+            this.logger = logger;
+            this.appLifetime = appLifetime;
+            this.environment = environment;
+            this.commonService = commonService;
+        }
+
+        
+        private void OnStarted()
+        {
+            this.commonService.OnStart();
+        }
+
+        private void OnStopping()
+        {
+        }
+
+
+        private void OnStopped()
+        {
+            this.commonService.OnStop();
+        }
+        
+
+        Task IHostedService.StartAsync(System.Threading.CancellationToken cancellationToken)
+        {
+            this.logger.LogInformation("StartAsync method called.");
+
+            this.appLifetime.ApplicationStarted.Register(OnStarted);
+            this.appLifetime.ApplicationStopping.Register(OnStopping);
+            this.appLifetime.ApplicationStopped.Register(OnStopped);
+
+            return System.Threading.Tasks.Task.CompletedTask;
+        }
+
+
+        Task IHostedService.StopAsync(System.Threading.CancellationToken cancellationToken)
+        {
+            return System.Threading.Tasks.Task.CompletedTask;
+        }
+
+
+    } // End Class LinuxServiceHost 
+
+
 } // End Namespace 
