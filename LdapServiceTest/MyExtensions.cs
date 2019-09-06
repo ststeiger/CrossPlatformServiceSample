@@ -46,7 +46,6 @@ namespace LdapServiceTest
         {
             if (System.IO.File.Exists(FileName))
                 System.IO.File.Delete(FileName);
-
         }
         
         

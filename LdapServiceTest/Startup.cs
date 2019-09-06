@@ -27,17 +27,17 @@ namespace LdapServiceTest
     } // End Interface IStartup
     
     
-    public class Foo
+    public class ServiceStartup
         : IStartup
     {
         public Microsoft.Extensions.Configuration.IConfiguration Configuration { get; }
         private IApplicationBuilder m_application;
         
         
-        public Foo(Microsoft.Extensions.Configuration.IConfiguration configuration)
+        public ServiceStartup(Microsoft.Extensions.Configuration.IConfiguration configuration)
         {
             this.Configuration = configuration;
-        }
+        } // End Constructor 
         
         
         System.IServiceProvider IStartup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection services)
@@ -61,7 +61,7 @@ namespace LdapServiceTest
         }
         
         
-    } // End Class Foo 
+    } // End Class ServiceStartup 
     
     
 } // End Namespace LdapServiceTest 

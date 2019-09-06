@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging; // for AddConsole, AddDebug, AddFilter, SetM
 using Microsoft.Extensions.Hosting; // for ConfigureLogging, RunAsync 
 using Microsoft.Extensions.Configuration; // for SetBasePath, AddEnvironmentVariables, AddCommandLine, AddJsonFile 
 
-// for AddLogging, AddSingleton, Configure, BuildServiceProvier, AddHostedService
+// for AddLogging, AddSingleton, Configure, BuildServiceProvider, AddHostedService
 using Microsoft.Extensions.DependencyInjection; 
 
 
@@ -13,9 +13,95 @@ using Microsoft.Extensions.DependencyInjection;
 // https://www.codewall.co.uk/running-net-core-generic-host-as-a-windows-service-linux-daemon-or-console-app/
 
 
+
+
+
+
 // https://dejanstojanovic.net/aspnet/2018/august/creating-windows-service-and-linux-daemon-with-the-same-code-base-in-net/
 namespace LdapServiceTest
 {
+
+    public class HostingEnvironment : //IHostingEnvironment, 
+        Microsoft.Extensions.Hosting.IHostingEnvironment
+    {
+        public string EnvironmentName { get; set; } // = Hosting.EnvironmentName.Production;
+
+        public string ApplicationName { get; set; }
+
+        public string WebRootPath { get; set; }
+
+        public Microsoft.Extensions.FileProviders.IFileProvider WebRootFileProvider { get; set; }
+
+        public string ContentRootPath { get; set; }
+
+        public Microsoft.Extensions.FileProviders.IFileProvider ContentRootFileProvider { get; set; }
+    }
+    
+    
+    class ServiceBuilder
+    {
+        
+        protected Microsoft.Extensions.DependencyInjection.IServiceCollection m_hostServices;
+        protected Microsoft.Extensions.Configuration.IConfigurationBuilder m_configurationBuilder;
+        
+        
+        public ServiceBuilder()
+        {
+            this.m_hostServices = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+            this.m_configurationBuilder =  new Microsoft.Extensions.Configuration.ConfigurationBuilder();
+        }
+        
+        
+        // https://github.com/aspnet/Hosting/blob/master/src/Microsoft.AspNetCore.Hosting/Internal/ServiceCollectionExtensions.cs
+        private static IServiceCollection Clone(IServiceCollection serviceCollection)
+        {
+            IServiceCollection clone = new ServiceCollection();
+            foreach (ServiceDescriptor service in serviceCollection)
+            {
+                clone.Add(service);
+            }
+            
+            return clone;
+        }
+        
+        public ServiceBuilder UseStartUp<T>()
+        {
+            System.Type startupType = typeof(T);
+            
+            
+            Microsoft.Extensions.DependencyInjection.IServiceCollection services = 
+                new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+            
+            
+            services.AddSingleton(typeof(IStartup), startupType);
+
+            System.IServiceProvider sp = services.BuildServiceProvider();
+            
+            
+            Microsoft.Extensions.DependencyInjection.IServiceCollection services2 = 
+            Clone(services);
+            IStartup startup = sp.GetRequiredService<IStartup>();
+            
+            services2.AddSingleton<IStartup>(startup);
+            
+            
+            
+            
+            
+            // Create configuration builder  
+            Microsoft.Extensions.Configuration.IConfigurationBuilder configurationBuilder = 
+                    new Microsoft.Extensions.Configuration.ConfigurationBuilder()
+                        .SetBasePath(System.IO.Directory.GetCurrentDirectory())
+                //.AddJsonFile("appsettings.json")
+                ;
+
+            
+            
+            return this;
+        }
+        
+    }
+    
     
     
     class Program
@@ -82,7 +168,7 @@ namespace LdapServiceTest
             // Inject common service  
             services.AddSingleton(typeof(ICommonService), typeof(CommonSampleService));
             
-            // Inject concrete implementaion of the service  
+            // Inject concrete implementation of the service  
             services.AddSingleton(typeof(System.ServiceProcess.ServiceBase), typeof(GenericService));
             
             // My configuration
@@ -115,10 +201,9 @@ namespace LdapServiceTest
             if (System.Diagnostics.Debugger.IsAttached)
             {
                 // Console Debug mode  
-
                 GenericService svc = serviceProvider.GetService<System.ServiceProcess.ServiceBase>() as GenericService;
                 svc.StartService(args);
-
+                
                 // System.Console.ReadLine();
                 
                 System.ConsoleKey cc = default(System.ConsoleKey);
@@ -137,7 +222,7 @@ namespace LdapServiceTest
                         System.Console.Clear();
                     
                 } while (cc != System.ConsoleKey.Enter);
-
+                
                 svc.Stop();
             }
             else
@@ -151,7 +236,7 @@ namespace LdapServiceTest
                 
                 System.ServiceProcess.ServiceBase.Run(servicesToRun);
             } // End else of if (System.Diagnostics.Debugger.IsAttached) 
-
+            
             // await System.Threading.Tasks.Task.CompletedTask;
         } // End Task RunAsWindowsService 
         
@@ -174,24 +259,24 @@ namespace LdapServiceTest
                      configApp.AddJsonFile($"appsettings.{hostContext.HostingEnvironment.EnvironmentName}.json", true);
                      configApp.AddCommandLine(args);
                  })
-                .ConfigureServices((hostContext, services) =>
-                {
+                 .ConfigureServices((hostContext, services) =>
+                 {
                     services.AddLogging();
                     services.AddHostedService<LinuxServiceHost>();
                     services.AddSingleton(typeof(ICommonService), typeof(CommonSampleService));
                     
                     // My configuration
                     services.AddSingleton(new MyConfig());
-                })
-                .ConfigureLogging((hostContext, configLogging) =>
-                {
+                 })
+                 .ConfigureLogging((hostContext, configLogging) =>
+                 {
                     // configLogging.AddSerilog(new LoggerConfiguration()
                     //           .ReadFrom.Configuration(hostContext.Configuration)
                     //           .CreateLogger());
                     configLogging.AddConsole();
                     configLogging.AddDebug();
-                })
-                .Build();
+                 })
+                 .Build();
             
             await host.RunAsync();
         } // End Task RunAsDaemon 
