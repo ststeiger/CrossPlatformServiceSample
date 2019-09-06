@@ -37,31 +37,9 @@ namespace LdapServiceTest
         {
             string[] args = null;
 
-            GenericService svc = this.m_host.Services.GetService<System.ServiceProcess.ServiceBase>() as GenericService;
-            svc.StartService(args);
-
-            // System.Console.ReadLine();
-            System.ConsoleKey cc = default(System.ConsoleKey);
-            do
-            {
-                // THIS IS MADNESS!!!   Madness huh?   THIS IS SPARTA!!!!!!! 
-                while (!System.Console.KeyAvailable)
-                {
-                    // System.Threading.Thread.Sleep(100);
-                    await System.Threading.Tasks.Task.Delay(100);
-                }
-
-                cc = System.Console.ReadKey().Key;
-
-                if (cc == System.ConsoleKey.C)
-                    System.Console.Clear();
-
-            } while (cc != System.ConsoleKey.Enter);
-
-            svc.Stop();
+            await RunAsPlatformIndependentService(args);
         }
-
-
+        
 
         protected async System.Threading.Tasks.Task RunAsPlatformIndependentService(string[] args)
         {
