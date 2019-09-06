@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging; // for LogInformation, LogError, LogWarning, etc.
 
 
-namespace LdapServiceTest
+namespace UniversalService
 {
     
     

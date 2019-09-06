@@ -7,7 +7,7 @@ namespace LdapServiceTest
     
     
     public class CommonSampleService
-        : ICommonService
+        : UniversalService.ICommonService
     {
         
         
@@ -52,7 +52,7 @@ namespace LdapServiceTest
         } // End Task RunDbSync 
         
         
-        void ICommonService.OnStart()
+        void UniversalService.ICommonService.OnStart()
         {
             StaticTestLogger.AppendLine("XXXService: StartAsync");
             System.Console.WriteLine("XXXService: StartAsync");
@@ -62,7 +62,7 @@ namespace LdapServiceTest
         }
         
         
-        void ICommonService.OnStop()
+        void UniversalService.ICommonService.OnStop()
         {
             StaticTestLogger.AppendLine("XXXService: StopAsync");
             System.Console.WriteLine("XXXService: StopAsync");
@@ -72,15 +72,15 @@ namespace LdapServiceTest
         }
         
         
-        void ICommonService.OnPause()
+        void UniversalService.ICommonService.OnPause()
         {
-            ((ICommonService)this).OnStop();
+            ((UniversalService.ICommonService)this).OnStop();
         }
         
         
-        void ICommonService.OnContinue()
+        void UniversalService.ICommonService.OnContinue()
         {
-            ((ICommonService)this).OnStart();
+            ((UniversalService.ICommonService)this).OnStart();
         }
         
         

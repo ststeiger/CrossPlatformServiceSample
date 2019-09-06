@@ -22,14 +22,14 @@ namespace LdapServiceTest
         static async System.Threading.Tasks.Task Main(string[] args)
         {
             await RunService(args);
-        }
-        
+        } // End Task Main 
+
 
         static async System.Threading.Tasks.Task RunService(string[] args)
         {
             StaticTestLogger.ResetLogfile();
 
-            var shb = new ServiceHostBuilder()
+            var shb = new UniversalService.ServiceHostBuilder()
                 .ConfigureHostConfiguration(configHost =>
                 {
                     string dir = System.IO.Path.GetDirectoryName(typeof(Program).Assembly.Location);
@@ -75,8 +75,8 @@ namespace LdapServiceTest
                 System.Console.WriteLine(ex.StackTrace);
             }
 
-        } // End Task Main 
-        
+        } // End Task RunService 
+
 
     } // End Class Program 
     

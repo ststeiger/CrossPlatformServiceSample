@@ -47,4 +47,6 @@
 
   <Import Project="..\libResXResourceReader\libResXResourceReader.projitems" Label="Shared" />
 
+  <Import Project="..\UniversalService\UniversalService.projitems" Label="Shared" />
+
 </Project>

@@ -3,7 +3,7 @@
 using Microsoft.Extensions.DependencyInjection;
 
 
-namespace LdapServiceTest
+namespace UniversalService
 {
 
 

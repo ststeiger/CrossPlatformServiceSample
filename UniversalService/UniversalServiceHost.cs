@@ -3,7 +3,7 @@ using Microsoft.Extensions.Hosting; // for RunAsync
 using Microsoft.Extensions.DependencyInjection; // for GetService
 
 
-namespace LdapServiceTest
+namespace UniversalService
 {
 
 

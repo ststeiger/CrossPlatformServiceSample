@@ -1,5 +1,5 @@
 ﻿
-namespace LdapServiceTest
+namespace UniversalService
 {
 
     public class HostingEnvironment : //IHostingEnvironment, 

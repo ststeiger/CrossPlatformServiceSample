@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>a35dead0-3ece-4609-ba3f-80663875d1cb</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>UniversalService</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ApplicationBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GenericService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HostingEnvironment.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IApplicationBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IStartup.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LinuxServiceHost.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ServiceHostBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UniversalServiceHost.cs" />
+  </ItemGroup>
+</Project>

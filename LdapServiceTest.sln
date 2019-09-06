@@ -7,9 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LdapServiceTest", "LdapServ
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "libResXResourceReader", "libResXResourceReader\libResXResourceReader.shproj", "{4FA2AD37-FC2D-485A-93F0-80B5535C73A4}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UniversalService", "UniversalService\UniversalService.shproj", "{A35DEAD0-3ECE-4609-BA3F-80663875D1CB}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		libResXResourceReader\libResXResourceReader.projitems*{4fa2ad37-fc2d-485a-93f0-80b5535c73a4}*SharedItemsImports = 13
+		UniversalService\UniversalService.projitems*{a35dead0-3ece-4609-ba3f-80663875d1cb}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
