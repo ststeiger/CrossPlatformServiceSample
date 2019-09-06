@@ -1,0 +1,7 @@
+﻿
+https://github.com/aspnet/Extensions/tree/master/src/Configuration/Config.Ini/src
+at commit: 
+https://github.com/aspnet/Extensions/tree/ecc4d9fe9381ac65848968b672eb6098ec2a2cae/src/Configuration/Config.Ini/src
+
+on a higher framwork: 
+https://www.nuget.org/packages/Microsoft.Extensions.Configuration.Ini/

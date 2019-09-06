@@ -1,4 +1,7 @@
 
+using Microsoft.Extensions.DependencyInjection;
+
+
 namespace LdapServiceTest
 {
 
@@ -16,8 +19,9 @@ namespace LdapServiceTest
 
         // RequestDelegate Build();
     } // End interface IApplicationBuilder
-    
-    
+
+
+
     // namespace Microsoft.AspNetCore.Hosting
     public interface IStartup
     {
@@ -42,11 +46,28 @@ namespace LdapServiceTest
         
         System.IServiceProvider IStartup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection services)
         {
-            return null;
-            //throw new NotImplementedException();
+            services.AddLogging();
+
+            // Inject common service  
+            services.AddSingleton(typeof(ICommonService), typeof(CommonSampleService));
+
+            
+
+            // My configuration
+            services.AddSingleton(new MyConfig());
+
+            services.Configure<SmtpConfig>(
+                delegate (SmtpConfig config)
+                {
+                    config.Server = "hello world";
+                    return;
+                }
+            );
+
+            return services.BuildServiceProvider();
         }
-        
-        
+
+
         void IStartup.Configure(IApplicationBuilder app)
         {
             this.m_application = app;

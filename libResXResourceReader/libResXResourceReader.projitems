@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>4fa2ad37-fc2d-485a-93f0-80b5535c73a4</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>libResXResourceReader</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)AssemblyNamesTypeResolutionService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ByteArrayFromResXHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FileRefHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InMemoryHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MonoTODOAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NullRefHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ResXDataNode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ResXDataNodeHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ResXFileRef.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ResXNullRef.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ResXResourceReader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ResXResourceSet.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ResXResourceWriter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SerializedFromResXHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TypeConverterFromResXHandler.cs" />
+  </ItemGroup>
+</Project>

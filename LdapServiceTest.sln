@@ -3,9 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.271
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LdapServiceTest", "LdapServiceTest\LdapServiceTest.csproj", "{45CEEAAF-6B50-481A-A669-4DAA3BC3F50F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LdapServiceTest", "LdapServiceTest\LdapServiceTest.csproj", "{45CEEAAF-6B50-481A-A669-4DAA3BC3F50F}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "libResXResourceReader", "libResXResourceReader\libResXResourceReader.shproj", "{4FA2AD37-FC2D-485A-93F0-80B5535C73A4}"
 EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		libResXResourceReader\libResXResourceReader.projitems*{4fa2ad37-fc2d-485a-93f0-80b5535c73a4}*SharedItemsImports = 13
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
