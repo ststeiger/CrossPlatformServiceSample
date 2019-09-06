@@ -33,22 +33,24 @@ namespace LdapServiceTest
                 .ConfigureHostConfiguration(configHost =>
                 {
                     string dir = System.IO.Path.GetDirectoryName(typeof(Program).Assembly.Location);
-                    dir = System.IO.Directory.GetCurrentDirectory();
-
+                    // dir = System.IO.Directory.GetCurrentDirectory();
                     configHost.SetBasePath(dir);
-                    configHost.AddEnvironmentVariables(prefix: "ASPNETCORE_");
+
                     configHost.AddCommandLine(args);
+                    configHost.AddEnvironmentVariables(prefix: "ASPNETCORE_");
                 })
                 .ConfigureAppConfiguration((hostContext, configApp) =>
                 {
-                    configApp.SetBasePath(System.IO.Directory.GetCurrentDirectory());
+                    string dir = System.IO.Path.GetDirectoryName(typeof(Program).Assembly.Location);
+                    // dir = System.IO.Directory.GetCurrentDirectory();
+                    configApp.SetBasePath(dir);
+
+                    configApp.AddCommandLine(args);
                     configApp.AddEnvironmentVariables(prefix: "ASPNETCORE_");
                     configApp.AddJsonFile($"appsettings.json", true);
                     configApp.AddJsonFile($"appsettings.{hostContext.HostingEnvironment.EnvironmentName}.json", true);
-                    configApp.AddCommandLine(args);
-
+                    
                     // configApp.AddIniFile("");
-
                 })
                 .ConfigureLogging((hostContext, configLogging) =>
                 {
